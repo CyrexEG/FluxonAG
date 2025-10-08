@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxon Agency - Minimal Effort, Maximum Impact</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="shortcut icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .gradient-orb {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+            top: -250px;
+            left: -250px;
+        }
+
+        .orb-2 {
+            background: radial-gradient(circle, rgba(255,255,255,0.6), transparent);
+            bottom: -250px;
+            right: -250px;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+
+        .logo img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-btn {
+            padding: 0.75rem 1.5rem;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 5%;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.1s;
+        }
+
+        .hero-logo img {
+            height: 80px;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+
+        .hero-logo img:hover {
+            transform: scale(1.05);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.2s;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.4s;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.6s;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            background: #fff;
+            color: #000;
+            border: 2px solid #fff;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: #fff;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Services Section */
+        .services {
+            position: relative;
+            padding: 8rem 5%;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 4rem;
+            font-weight: 700;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(255,255,255,0.1);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+
+        /* Philosophy Section */
+        .philosophy {
+            position: relative;
+            padding: 8rem 5%;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .philosophy-content {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 4rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .philosophy h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 2rem;
+        }
+
+        .philosophy p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            position: relative;
+            padding: 6rem 5%;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #fff, rgba(255,255,255,0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* CTA Section */
+        .final-cta {
+            position: relative;
+            padding: 8rem 5%;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .final-cta h2 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 2rem;
+        }
+
+        .final-cta p {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            padding: 3rem 5%;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            z-index: 1;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator::before {
+            content: '↓';
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Contact Form Styles */
+        .contact-form-section {
+            position: relative;
+            padding: 8rem 5%;
+            z-index: 1;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-form {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .form-group select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .form-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .form-message.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            display: block;
+        }
+
+        .form-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            display: block;
+        }
+
+        /* Success Animation Styles */
+        .success-animation {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .success-animation.show {
+            display: block;
+            animation: fadeInScale 0.5s ease-out;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin: 0 auto 2rem;
+            position: relative;
+            animation: checkmarkPulse 0.6s ease-out;
+        }
+
+        .checkmark::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 0 4px 4px;
+            transform: translate(-50%, -60%) rotate(-45deg);
+        }
+
+        .success-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 1rem;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .countdown {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            display: inline-block;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes checkmarkPulse {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
+            .hero-logo img {
+                height: 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+
+            .philosophy-content {
+                padding: 2rem;
+            }
+
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+
+    <nav>
+        <div class="logo">FLUXON&nbsp&nbspAGENCY</div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="cta-btn">Get Started</button>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-logo">
+            <img src="ultra.png" alt="Fluxon Agency Logo">
+        </div>
+        <h1>MINIMAL EFFORT,<br>MAXIMUM IMPACT</h1>
+        <p class="tagline">Next-generation digital services that transform brands</p>
+        <div class="hero-buttons">
+            <button class="btn-primary">Start Your Project</button>
+            <button class="btn-secondary">View Our Work</button>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <section class="services" id="services">
+        <h2 class="section-title">What We Do</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon"></div>
+                <h3>Web Design</h3>
+                <p>Stunning, responsive websites that captivate and convert your audience with modern design principles.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"></div>
+                <h3>Graphic Design</h3>
+                <p>Visual identities that stand out and communicate your brand message with clarity and impact.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"></div>
+                <h3>Video Editing</h3>
+                <p>Professional video content that engages viewers and tells your story in compelling ways.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"></div>
+                <h3>Affiliate Marketing</h3>
+                <p>Strategic campaigns that drive revenue and build lasting partnerships in the digital space.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="philosophy" id="about">
+        <div class="philosophy-content">
+            <h2>Our Philosophy</h2>
+            <p>At Fluxon Agency, we believe in creating systems where skilled professionals deliver exceptional results while organizers focus on innovation and growth.</p>
+            <p>Each sector operates under trusted project leaders who manage teams, determine compensation, and develop winning strategies. This structure ensures flexibility, accountability, and unlimited potential.</p>
+            <p><strong>We're more than a service provider — we're a hub for creators, entrepreneurs, and digital specialists who want to collaborate, earn, and make a real impact.</strong></p>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Happy Clients</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Team Members</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99%</div>
+                <div class="stat-label">Satisfaction Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="contact-form-section" id="contact">
+        <div class="contact-container">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="contact-subtitle">Ready to start your project? Let's discuss how we can help you achieve maximum impact with minimal effort.</p>
+            
+            <!-- Success Animation (hidden by default) -->
+            <div id="successAnimation" class="success-animation">
+                <div class="checkmark"></div>
+                <h3 class="success-title">Thank You!</h3>
+                <p class="success-message">Your message has been sent successfully. We'll get back to you soon.</p>
+                <div class="countdown">
+                    Form will reset in <span id="countdownNumber">5</span> seconds
+                </div>
+            </div>
+
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">Company/Organization</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                
+                <div class="form-group">
+                    <label for="service">Service Interested In</label>
+                    <select id="service" name="service">
+                        <option value="">Select a service</option>
+                        <option value="web-design">Web Design</option>
+                        <option value="graphic-design">Graphic Design</option>
+                        <option value="video-editing">Video Editing</option>
+                        <option value="affiliate-marketing">Affiliate Marketing</option>
+                        <option value="digital-resale">Digital Resale</option>
+                        <option value="brand-growth">Brand Growth</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="budget">Project Budget</label>
+                    <select id="budget" name="budget">
+                        <option value="">Select budget range</option>
+                        <option value="under-5k">Under $100</option>
+                        <option value="5k-10k">$100 - $250</option>
+                        <option value="10k-25k">$250 - $500</option>
+                        <option value="25k-50k">$500 - $1200</option>
+                        <option value="over-50k">Over $1200</option>
+                        <option value="discuss">Let's discuss</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Project Details *</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Tell us about your project, goals, and any specific requirements..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary submit-btn">
+                    <span class="btn-text">Send Message</span>
+                    <span class="btn-loading" style="display: none;">Sending...</span>
+                </button>
+                
+                <div id="form-message" class="form-message"></div>
+            </form>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <h2>Ready to Transform Your Brand?</h2>
+        <p>Join forces with Fluxon Agency and experience the power of minimal effort, maximum impact. Let's build something extraordinary together.</p>
+        <button class="btn-primary">Let's Talk</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Fluxon Agency. All rights reserved. | Building the future, one project at a time.</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add scroll animation to service cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.service-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+            observer.observe(card);
+        });
+
+        // Animate stats on scroll
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const endValue = parseInt(target.textContent);
+                    let current = 0;
+                    const increment = endValue / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= endValue) {
+                            target.textContent = endValue + (target.textContent.includes('%') ? '%' : '+');
+                            clearInterval(timer);
+                        } else {
+                            target.textContent = Math.floor(current) + (target.textContent.includes('%') ? '%' : '+');
+                        }
+                    }, 30);
+                    statObserver.unobserve(target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(stat => {
+            statObserver.observe(stat);
+        });
+
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://qxsaqpdhyweartdimtrl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4c2FxcGRoeXdlYXJ0ZGltdHJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk4OTYyNzAsImV4cCI6MjA3NTQ3MjI3MH0.gl05AmuT4JSLSRVvkYAN1EhET10qbZGMiFNt18ONlWw';
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Contact Form Handling
+        const contactForm = document.getElementById('contactForm');
+        const formMessage = document.getElementById('form-message');
+        const submitBtn = document.querySelector('.submit-btn');
+        const btnText = document.querySelector('.btn-text');
+        const btnLoading = document.querySelector('.btn-loading');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                company: formData.get('company') || null,
+                service: formData.get('service') || null,
+                budget: formData.get('budget') || null,
+                message: formData.get('message'),
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                console.log('Submitting data:', data); // Debug log
+                
+                // Insert data into Supabase
+                const { data: result, error } = await supabaseClient
+                    .from('contact_submissions')
+                    .insert([data]);
+
+                console.log('Supabase response:', { result, error }); // Debug log
+
+                if (error) {
+                    console.error('Supabase error:', error);
+                    throw error;
+                }
+
+                // Show success animation
+                showSuccessAnimation();
+                
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showMessage(`Sorry, there was an error: ${error.message}. Please try again or contact us directly.`, 'error');
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            }
+        });
+
+        function showMessage(text, type) {
+            formMessage.textContent = text;
+            formMessage.className = `form-message ${type}`;
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                formMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccessAnimation() {
+            const form = document.getElementById('contactForm');
+            const successAnimation = document.getElementById('successAnimation');
+            const countdownNumber = document.getElementById('countdownNumber');
+            
+            // Hide form and show success animation
+            form.style.display = 'none';
+            successAnimation.classList.add('show');
+            
+            // Start countdown
+            let countdown = 5;
+            countdownNumber.textContent = countdown;
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownNumber.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // Reset form and hide success animation
+                    form.reset();
+                    form.style.display = 'block';
+                    successAnimation.classList.remove('show');
+                }
+            }, 1000);
+        }
+
+        // Button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get Started button (nav)
+            const getStartedBtn = document.querySelector('.cta-btn');
+            if (getStartedBtn) {
+                getStartedBtn.addEventListener('click', function() {
+                    document.getElementById('contact').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                });
+            }
+
+            // Start Your Project button (hero)
+            const startProjectBtn = document.querySelector('.btn-primary');
+            if (startProjectBtn) {
+                startProjectBtn.addEventListener('click', function() {
+                    document.getElementById('contact').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                });
+            }
+
+            // View Our Work button (hero)
+            const viewWorkBtn = document.querySelector('.btn-secondary');
+            if (viewWorkBtn) {
+                viewWorkBtn.addEventListener('click', function() {
+                    document.getElementById('services').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                });
+            }
+
+            // Let's Talk button (final CTA)
+            const letsTalkBtn = document.querySelector('.final-cta .btn-primary');
+            if (letsTalkBtn) {
+                letsTalkBtn.addEventListener('click', function() {
+                    document.getElementById('contact').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
